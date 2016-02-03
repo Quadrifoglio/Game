@@ -69,33 +69,40 @@ int main(void) {
 
 	game_t g = {0};
 	if(!load_game(&g)) {
+		fputs("Can not load game", stderr);
+
 		glfwTerminate();
 		return 1;
 	}
 
-	GLFWwindow* w = glfwCreateWindow(640, 480, "Game", 0, 0);
+	GLFWwindow* w = glfwCreateWindow(1280, 720, "Game", 0, 0);
 	if(!w) {
-		glfwTerminate();
-
 		fputs("Can not create window", stderr);
+
+		glfwTerminate();
 		return 1;
 	}
 
 	glfwMakeContextCurrent(w);
 
 	if(glewInit() != GLEW_OK) {
+		fputs("Can not initialize OpenGL !", stderr);
+
 		glfwTerminate();
 		return 1;
 	}
 
 	if(!GLEW_VERSION_2_0) {
-		fputs("OpenGL 2.0 or better required !", stderr);
+		fputs("OpenGL 2.0 or better required, upgrade your graphic card or it's driver", stderr);
 
 		glfwTerminate();
 		return 1;
 	}
 
-	game_ctx_t c = {0};
+	game_ctx_t c;
+	c.size = 10000000; // 10MB
+	c.storage = malloc(c.size);
+
 	g.init(&c);
 
 	while(!glfwWindowShouldClose(w)) {
@@ -110,6 +117,7 @@ int main(void) {
 		glfwPollEvents();
 	}
 
+	free(c.storage);
 	dlclose(g.app);
 	glfwTerminate();
 

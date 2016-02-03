@@ -1,6 +1,11 @@
 #pragma once
 
 #include "global.h"
+#include "game/renderer.h"
+
+typedef struct {
+	shaders_t shaders;
+} game_state_t;
 
 extern void game_init(game_ctx_t* c);
 extern void game_event(game_ctx_t* c);

@@ -1,19 +1,21 @@
 #include "game/game.h"
-#include <GL/glew.h>
 
 void game_init(game_ctx_t* c) {
+	game_state_t* s = (game_state_t*)c->storage;
 
+	s->shaders = load_shaders("shaders/basic.vertex", "shaders/basic.fragment");
 }
 
 void game_event(game_ctx_t* c) {
-
+	game_state_t* s = (game_state_t*)c->storage;
 }
 
 void game_update(game_ctx_t* c, float dt) {
-
+	game_state_t* s = (game_state_t*)c->storage;
 }
 
 void game_render(game_ctx_t* c) {
-	glClearColor(0.f, 0.f, 1.f, 1.f);
-	glClear(GL_COLOR_BUFFER_BIT);
+	game_state_t* s = (game_state_t*)c->storage;
+
+	clear_screen();
 }
