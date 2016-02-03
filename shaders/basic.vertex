@@ -1,7 +1,13 @@
-#version 130
+#version 120
 
-in vec2 position;
+uniform mat4 proj;
+
+attribute vec2 position;
+attribute vec4 color;
+
+varying vec4 outColor;
 
 void main() {
-	gl_Position = vec4(position, 0.0, 1.0);
+	outColor = color;
+	gl_Position = proj * vec4(position, 0.0, 1.0);
 }
