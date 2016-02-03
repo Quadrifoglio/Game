@@ -1,0 +1,23 @@
+cc = clang
+cflags = -g -I include -Wall -Wextra
+
+gameLibs = -lGL
+exeLibs = -ldl -lglfw -lGLEW
+
+rule cc
+  command = $cc -fPIC $cflags -c $in -o $out
+  description = CC $in: $out
+
+rule ldso
+  command = $cc -shared $in -o $out $gameLibs
+  description = LD: $out
+
+rule ld
+  command = $cc $in -o $out $exeLibs
+  description = LD: $out
+
+build build/game/game.o: cc src/game/game.c
+build build/game/game.so: ldso build/game/game.o
+
+build build/sdl_game.o: cc src/sdl_game.c
+build build/exe: ld build/sdl_game.o
