@@ -1,6 +1,7 @@
 #version 120
 
 uniform mat4 proj;
+uniform mat4 view;
 
 attribute vec2 position;
 attribute vec4 color;
@@ -9,5 +10,5 @@ varying vec4 outColor;
 
 void main() {
 	outColor = color;
-	gl_Position = proj * vec4(position, 0.0, 1.0);
+	gl_Position = proj * view * vec4(position, 0.0, 1.0);
 }

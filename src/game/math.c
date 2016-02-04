@@ -12,6 +12,33 @@ v2_t v2_multiplyf(v2_t v, float k) {
 	return (v2_t){v.x * k, v.y * k};
 }
 
+v3_t v3_cross(v3_t a, v3_t b) {
+	v3_t res;
+
+	res.x = a.y * b.z - a.z * b.y;
+	res.y = a.z * b.x - a.x * b.z;
+	res.z = a.x * b.y - a.y * b.x;
+
+	return res;
+}
+
+v3_t v3_normalize(v3_t v) {
+	float r = sqrt(v.x * v.x + v.y * v.y + v.z * v.z);
+	if(r == 0.f) {
+		return v;
+	}
+
+	v.x /= r;
+	v.y /= r;
+	v.z /= r;
+
+	return v;
+}
+
+float v3_scalar(v3_t a, v3_t b) {
+	return a.x * b.x + a.y * b.y + a.z * b.z;
+}
+
 mat4_t mat4_null() {
 	mat4_t m;
 	memset(&m, 0, sizeof(mat4_t));
@@ -68,6 +95,36 @@ mat4_t mat4_ortho_projection(float left, float right, float bot, float top, floa
 	return mat;
 }
 
+// TODO: FIX THE GODDAMN VIEW MATRIX
+mat4_t mat4_look_at(v3_t eye, v3_t center, v3_t up) {
+	v3_t f = { center.x - eye.x, center.y - eye.y, center.z - eye.z };
+	v3_t u = v3_normalize(up);
+	v3_t s = v3_normalize(v3_cross(u, f));
+
+	f = v3_normalize(f);
+	u = v3_cross(f, s);
+
+	mat4_t v = mat4_identity();
+
+	v.m11 = s.x;
+	v.m12 = s.y;
+	v.m12 = s.z;
+
+	v.m21 = u.x;
+	v.m22 = u.y;
+	v.m23 = u.z;
+
+	v.m31 =-f.x;
+	v.m32 =-f.y;
+	v.m33 =-f.z;
+
+	v.m14 = -v3_scalar(s, eye);
+	v.m24 = -v3_scalar(u, eye);
+	v.m34 = v3_scalar(f, eye);
+
+	return v;
+}
+
 mat4_t mat4_translate2(v2_t v) {
 	mat4_t res = mat4_identity();
 
@@ -79,7 +136,7 @@ mat4_t mat4_translate2(v2_t v) {
 	return res;
 }
 
-mat4_t mat4_transalte3(cl_v3 v) {
+mat4_t mat4_transalte3(v3_t v) {
 	mat4_t res = mat4_identity();
 
 	res.m14 = v.x;
@@ -101,7 +158,7 @@ mat4_t mat4_scale2(v2_t v) {
 	return res;
 }
 
-mat4_t mat4_Scale3(cl_v3 v) {
+mat4_t mat4_Scale3(v3_t v) {
 	mat4_t res = mat4_null();
 
 	res.m11 = v.x;

@@ -9,7 +9,7 @@ rule cc
   description = CC $in: $out
 
 rule ldso
-  command = $cc -shared $in -o $out $gameLibs
+  command = $cc -shared $in -o $out $gameLibs && mv build/game/game.so.temp build/game/game.so
   description = LD: $out
 
 rule ld
@@ -20,7 +20,7 @@ build build/game/game.o: cc src/game/game.c
 build build/game/renderer.o: cc src/game/renderer.c
 build build/game/math.o: cc src/game/math.c
 build build/game/utils.o: cc src/game/utils.c
-build build/game/game.so: ldso build/game/game.o build/game/renderer.o build/game/math.o build/game/utils.o
+build build/game/game.so.temp: ldso build/game/game.o build/game/renderer.o build/game/math.o build/game/utils.o
 
-build build/sdl_game.o: cc src/sdl_game.c
-build build/exe: ld build/sdl_game.o
+build build/glfw_game.o: cc src/glfw_game.c
+build build/exe: ld build/glfw_game.o

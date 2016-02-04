@@ -16,15 +16,21 @@ typedef struct {
 typedef struct {
 	GLuint vbuffer;
 	GLuint cbuffer;
+
+	size_t vertexCount;
 } mesh_t;
 
-shaders_t load_shaders(char* vertexPath, char* fragmentPath);
+void render_set_viewport(int w, int h);
 
-void clear_screen(void);
-void bind_shaders(shaders_t* s);
-void set_projection(shaders_t* s, mat4_t m);
+shaders_t render_load_shaders(char* vertexPath, char* fragmentPath);
+void render_bind_shaders(shaders_t* s);
 
-mesh_t create_mesh(size_t count, float* vertices, float* colors);
-void draw_mesh(shaders_t* s, mesh_t* m);
+void render_set_projection(shaders_t* s, mat4_t m);
+void render_set_view(shaders_t* s, mat4_t v);
 
-void check_render_errors(void);
+void render_clear_screen(void);
+
+mesh_t render_create_mesh(size_t count, float* vertices, float* colors);
+void render_draw_mesh(shaders_t* s, mesh_t* m);
+
+void render_check_errors(void);
