@@ -97,30 +97,33 @@ mat4_t mat4_ortho_projection(float left, float right, float bot, float top, floa
 
 // TODO: FIX THE GODDAMN VIEW MATRIX
 mat4_t mat4_look_at(v3_t eye, v3_t center, v3_t up) {
-	v3_t f = { center.x - eye.x, center.y - eye.y, center.z - eye.z };
-	v3_t u = v3_normalize(up);
-	v3_t s = v3_normalize(v3_cross(u, f));
+	v3_t fwd = { center.x - eye.x, center.y - eye.y, center.z - eye.z };
+	fwd = v3_normalize(fwd);
 
-	f = v3_normalize(f);
-	u = v3_cross(f, s);
+	v3_t right = v3_normalize(v3_cross(fwd, up));
+	up = v3_normalize(v3_cross(right, fwd));
 
-	mat4_t v = mat4_identity();
+	mat4_t v;
 
-	v.m11 = s.x;
-	v.m12 = s.y;
-	v.m12 = s.z;
+	v.m11 = right.x;
+	v.m12 = right.y;
+	v.m13 = right.z;
+	v.m14 = -v3_scalar(right, eye);
 
-	v.m21 = u.x;
-	v.m22 = u.y;
-	v.m23 = u.z;
+	v.m21 = up.x;
+	v.m22 = up.y;
+	v.m23 = up.z;
+	v.m24 = -v3_scalar(up, eye);
 
-	v.m31 =-f.x;
-	v.m32 =-f.y;
-	v.m33 =-f.z;
+	v.m31 = -fwd.x;
+	v.m32 = -fwd.y;
+	v.m33 = -fwd.z;
+	v.m34 = v3_scalar(fwd, eye);
 
-	v.m14 = -v3_scalar(s, eye);
-	v.m24 = -v3_scalar(u, eye);
-	v.m34 = v3_scalar(f, eye);
+	v.m41 = 0.f;
+	v.m42 = 0.f;
+	v.m43 = 0.f;
+	v.m44 = 1.f;
 
 	return v;
 }

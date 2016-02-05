@@ -9,8 +9,8 @@
 #include <GLFW/glfw3.h>
 
 typedef void(*init_func_t)(game_ctx_t*, int, int);
-typedef void(*event_func_t)(game_ctx_t*);
-typedef void(*update_func_t)(game_ctx_t*, float, double, double);
+typedef void(*event_func_t)(game_ctx_t*, game_event_t);
+typedef void(*update_func_t)(game_ctx_t*, float);
 typedef void(*render_func_t)(game_ctx_t*);
 
 typedef struct {
@@ -69,11 +69,17 @@ bool load_game(game_t* g) {
 }
 
 void key_pressed(GLFWwindow* w, int key, int scancode, int action, int mods) {
+	game_t* g = (game_t*)glfwGetWindowUserPointer(w);
+
+	game_event_t ev = {0};
+	ev.type = EVENT_KEY;
+	ev.keyPressed = (action == GLFW_PRESS || action == GLFW_REPEAT);
+
 	if(key == GLFW_KEY_ESCAPE) {
 		glfwSetWindowShouldClose(w, true);
+		return;
 	}
 	else if(key == GLFW_KEY_R && action == GLFW_RELEASE) {
-		game_t* g = (game_t*)glfwGetWindowUserPointer(w);
 
 		g->lastLoaded = 0;
 		memset(g->c.storage, g->c.size, 0);
@@ -84,7 +90,25 @@ void key_pressed(GLFWwindow* w, int key, int scancode, int action, int mods) {
 		}
 
 		g->init(&g->c, g->width, g->height);
+		return;
 	}
+	else if(key == GLFW_KEY_W) { // QWERTY !!
+		ev.keyAction = DIRECTION_UP;
+	}
+	else if(key == GLFW_KEY_D) {
+		ev.keyAction = DIRECTION_RIGHT;
+	}
+	else if(key == GLFW_KEY_S) {
+		ev.keyAction = DIRECTION_DOWN;
+	}
+	else if(key == GLFW_KEY_A) {
+		ev.keyAction = DIRECTION_LEFT;
+	}
+	else {
+		return;
+	}
+
+	g->event(&g->c, ev);
 }
 
 int main(void) {
@@ -142,10 +166,7 @@ int main(void) {
 			break;
 		}
 
-		double mx, my;
-		glfwGetCursorPos(w, &mx, &my);
-
-		g.update(&g.c, 1.f / 60.f, mx, my);
+		g.update(&g.c, 1.f / 60.f);
 		g.render(&g.c);
 
 		glfwSwapBuffers(w);

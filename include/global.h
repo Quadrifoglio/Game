@@ -6,6 +6,13 @@
 #define false 0
 #define true 1
 
+#define DIRECTION_UP    1
+#define DIRECTION_RIGHT 2
+#define DIRECTION_DOWN  3
+#define DIRECTION_LEFT  4
+
+#define EVENT_KEY 1
+
 typedef uint8_t bool;
 
 typedef uint8_t u8;
@@ -22,3 +29,11 @@ typedef struct {
 	void* storage;
 	size_t size;
 } game_ctx_t;
+
+typedef struct {
+	u8 type;
+
+	// Key event
+	bool keyPressed;
+	int keyAction;
+} game_event_t;
