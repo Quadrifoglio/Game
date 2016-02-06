@@ -17,6 +17,7 @@ typedef struct {
 	GLuint vbuffer;
 	GLuint cbuffer;
 
+	GLenum type;
 	size_t vertexCount;
 } mesh_t;
 
@@ -31,7 +32,7 @@ void render_set_model(shaders_t* s, mat4_t m);
 
 void render_clear_screen(void);
 
-mesh_t render_create_mesh(size_t count, float* vertices, float* colors);
+mesh_t render_create_mesh(GLenum t, size_t vcount, float* v, float* c);
 void render_draw_mesh(shaders_t* s, mesh_t* m);
 
 void render_check_errors(void);

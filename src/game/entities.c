@@ -22,7 +22,7 @@ ship_t ent_ship_create(c4_t color) {
 		color.r, color.g, color.b, color.a
 	};
 
-	s.mesh = render_create_mesh(6, v, cl);
+	s.mesh = render_create_mesh(GL_TRIANGLES, 6, v, cl);
 	s.position.x = 0.f;
 	s.position.y = 0.f;
 	s.velocity.x = 0.f;
@@ -54,7 +54,7 @@ void ent_ship_update(ship_t* s, float dt) {
 	s->position.y += s->velocity.y * s->speed * dt;
 }
 
-void ent_ship_render(ship_t* s, shaders_t* sh) {
+void ent_ship_render(shaders_t* sh, ship_t* s) {
 	v2_t p = {s->position.x - SHIP_WIDTH / 2.f, s->position.y - SHIP_HEIGHT / 2.f};
 	mat4_t model = mat4_identity();
 
@@ -98,7 +98,7 @@ base_t ent_base_create(c4_t color, v2_t position) {
 		color.r, color.g, color.b, color.a
 	};
 
-	b.mesh = render_create_mesh(6, v, c);
+	b.mesh = render_create_mesh(GL_TRIANGLES, 6, v, c);
 	b.position = position;
 
 	return b;
@@ -108,7 +108,7 @@ void ent_base_update(base_t* b, float dt) {
 
 }
 
-void ent_base_render(base_t* b, shaders_t* sh) {
+void ent_base_render(shaders_t* sh, base_t* b) {
 	mat4_t model = mat4_translate2(b->position);
 
 	render_set_model(sh, model);

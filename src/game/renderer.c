@@ -106,18 +106,19 @@ void render_set_model(shaders_t* s, mat4_t m) {
 	glUniformMatrix4fv(loc, 1, GL_TRUE, &m.m11);
 }
 
-mesh_t render_create_mesh(size_t count, float* vertices, float* colors) {
+mesh_t render_create_mesh(GLenum t, size_t vcount, float* v, float* c) {
 	mesh_t m;
-	m.vertexCount = count;
+	m.vertexCount = vcount;
+	m.type = t;
 
 	glGenBuffers(1, &m.vbuffer);
 	glGenBuffers(1, &m.cbuffer);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m.vbuffer);
-	glBufferData(GL_ARRAY_BUFFER, count * 2 * sizeof(float), vertices, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vcount * 2 * sizeof(float), v, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m.cbuffer);
-	glBufferData(GL_ARRAY_BUFFER, count * 4 * sizeof(float), colors, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, vcount * 4 * sizeof(float), c, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	return m;
@@ -130,7 +131,7 @@ void render_draw_mesh(shaders_t* s, mesh_t* m) {
 	glBindBuffer(GL_ARRAY_BUFFER, m->cbuffer);
 	glVertexAttribPointer(s->color, 4, GL_FLOAT, GL_FALSE, 0, 0);
 
-	glDrawArrays(GL_TRIANGLES, 0, m->vertexCount);
+	glDrawArrays(m->type, 0, m->vertexCount);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 }

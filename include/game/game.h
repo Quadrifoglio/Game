@@ -13,6 +13,8 @@ typedef struct {
 	v2_t cameraVel;
 	v2_t camera;
 
+	mesh_t bg;
+
 	ship_t ships[4];
 	size_t shipCount;
 

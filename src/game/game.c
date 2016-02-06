@@ -1,6 +1,7 @@
 #include "game/game.h"
 
 #include <stdio.h>
+#include "game/utils.h"
 
 void game_init(game_ctx_t* c, int w, int h) {
 	printf("Game initializing\n");
@@ -20,6 +21,29 @@ void game_init(game_ctx_t* c, int w, int h) {
 	s->camera.x = 0.f;
 	s->camera.y = 0.f;
 	render_set_view(&s->shaders, mat4_translate2(s->camera));
+
+	int nstars = 100;
+	float* v = malloc(nstars * 2 * sizeof(float));
+	float* cl = malloc(nstars * 2 * 4 * sizeof(float));
+	int n = 0, nn = 0;
+
+	for(int i = 0; i < nstars; ++i) {
+		float x = rand_float(0.f, s->width);
+		float y = rand_float(0.f, s->height);
+
+		v[n++] = x;
+		v[n++] = y;
+
+		cl[nn++] = 1.f;
+		cl[nn++] = 1.f;
+		cl[nn++] = 1.f;
+		cl[nn++] = 1.f;
+	}
+
+	s->bg = render_create_mesh(GL_POINTS, nstars * 2, v, cl);
+
+	free(v);
+	free(cl);
 
 	c4_t color = {1.f, 1.f, 1.f, 1.f};
 	s->bases[0] = ent_base_create(color, (v2_t){40.f, 22.5f});
@@ -92,12 +116,15 @@ void game_render(game_ctx_t* c) {
 
 	render_clear_screen();
 
+	render_set_model(&s->shaders, mat4_identity());
+	render_draw_mesh(&s->shaders, &s->bg);
+
 	for(int i = 0; i < (int)s->baseCount; ++i) {
-		ent_base_render(&s->bases[i], &s->shaders);
+		ent_base_render(&s->shaders, &s->bases[i]);
 	}
 
 	for(int i = 0; i < (int)s->shipCount; ++i) {
-		ent_ship_render(&s->ships[i], &s->shaders);
+		ent_ship_render(&s->shaders, &s->ships[i]);
 	}
 
 	render_check_errors();
