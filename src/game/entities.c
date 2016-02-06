@@ -75,3 +75,42 @@ void ent_ship_render(ship_t* s, shaders_t* sh) {
 	render_set_model(sh, model);
 	render_draw_mesh(sh, &s->mesh);
 }
+
+base_t ent_base_create(c4_t color, v2_t position) {
+	base_t b;
+
+	float v[6 * 2] = {
+		0.f, 1.1f,
+		0.5f, 2.f,
+		1.f, 1.1f,
+
+		0.1f, 0.9f,
+		1.f, 0.9f,
+		0.5f, 0.f
+	};
+
+	float c[6 * 4] = {
+		color.r, color.g, color.b, color.a,
+		color.r, color.g, color.b, color.a,
+		color.r, color.g, color.b, color.a,
+		color.r, color.g, color.b, color.a,
+		color.r, color.g, color.b, color.a,
+		color.r, color.g, color.b, color.a
+	};
+
+	b.mesh = render_create_mesh(6, v, c);
+	b.position = position;
+
+	return b;
+}
+
+void ent_base_update(base_t* b, float dt) {
+
+}
+
+void ent_base_render(base_t* b, shaders_t* sh) {
+	mat4_t model = mat4_translate2(b->position);
+
+	render_set_model(sh, model);
+	render_draw_mesh(sh, &b->mesh);
+}

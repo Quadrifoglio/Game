@@ -22,6 +22,10 @@ void game_init(game_ctx_t* c, int w, int h) {
 	render_set_view(&s->shaders, mat4_translate2(s->camera));
 
 	c4_t color = {1.f, 1.f, 1.f, 1.f};
+	s->bases[0] = ent_base_create(color, (v2_t){40.f, 22.5f});
+	s->baseCount = 1;
+
+	color = (c4_t){1.f, 1.f, 1.f, 1.f};
 	s->ships[0]= ent_ship_create(color);
 	s->ships[0].position = (v2_t){SHIP_WIDTH / 2.f, SHIP_HEIGHT / 2.f};
 
@@ -38,6 +42,7 @@ void game_init(game_ctx_t* c, int w, int h) {
 	color = (c4_t){0.f, 0.f, 1.f, 1.f};
 	s->ships[3] = ent_ship_create(color);
 	s->ships[3].position = (v2_t){s->width - (SHIP_WIDTH / 2.f), SHIP_HEIGHT / 2.f};
+	s->shipCount = 4;
 }
 
 void game_event(game_ctx_t* c, game_event_t ev) {
@@ -60,7 +65,7 @@ void game_event(game_ctx_t* c, game_event_t ev) {
 		}
 	}
 	else if(ev.type == EVENT_CLICK) {
-		for(int i = 0; i < (int)sizeof(s->ships); ++i) {
+		for(int i = 0; i < (int)s->shipCount; ++i) {
 			s->ships[i].target = (v2_t){ev.clickX / UNIT_SIZE, s->height - ev.clickY / UNIT_SIZE};
 		}
 	}
@@ -69,13 +74,17 @@ void game_event(game_ctx_t* c, game_event_t ev) {
 void game_update(game_ctx_t* c, float dt) {
 	game_state_t* s = (game_state_t*)c->storage;
 
+	for(int i = 0; i < (int)s->baseCount; ++i) {
+		ent_base_update(&s->bases[i], dt);
+	}
+
+	for(int i = 0; i < (int)s->shipCount; ++i) {
+		ent_ship_update(&s->ships[i], dt);
+	}
+
 	s->camera.x += s->cameraVel.x * 8.f * dt;
 	s->camera.y += s->cameraVel.y * 8.f * dt;
 	render_set_view(&s->shaders, mat4_translate2(s->camera));
-
-	for(int i = 0; i < (int)sizeof(s->ships); ++i) {
-		ent_ship_update(&s->ships[i], dt);
-	}
 }
 
 void game_render(game_ctx_t* c) {
@@ -83,7 +92,11 @@ void game_render(game_ctx_t* c) {
 
 	render_clear_screen();
 
-	for(int i = 0; i < (int)sizeof(s->ships); ++i) {
+	for(int i = 0; i < (int)s->baseCount; ++i) {
+		ent_base_render(&s->bases[i], &s->shaders);
+	}
+
+	for(int i = 0; i < (int)s->shipCount; ++i) {
 		ent_ship_render(&s->ships[i], &s->shaders);
 	}
 
