@@ -27,6 +27,7 @@ void render_bind_shaders(shaders_t* s);
 
 void render_set_projection(shaders_t* s, mat4_t m);
 void render_set_view(shaders_t* s, mat4_t v);
+void render_set_model(shaders_t* s, mat4_t m);
 
 void render_clear_screen(void);
 

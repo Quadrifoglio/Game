@@ -6,12 +6,15 @@
 #define false 0
 #define true 1
 
+#define PI 3.14159265359f
+
 #define DIRECTION_UP    1
 #define DIRECTION_RIGHT 2
 #define DIRECTION_DOWN  3
 #define DIRECTION_LEFT  4
 
-#define EVENT_KEY 1
+#define EVENT_KEY   1
+#define EVENT_CLICK 2
 
 typedef uint8_t bool;
 
@@ -36,4 +39,8 @@ typedef struct {
 	// Key event
 	bool keyPressed;
 	int keyAction;
+
+	// Click event
+	float clickX;
+	float clickY;
 } game_event_t;

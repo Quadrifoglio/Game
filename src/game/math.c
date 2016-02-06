@@ -2,7 +2,6 @@
 
 #include <string.h>
 #include <stdio.h>
-#include <math.h>
 
 v2_t v2_add(v2_t v, v2_t vv) {
 	return (v2_t){v.x + vv.x, v.y + vv.y};
@@ -10,6 +9,43 @@ v2_t v2_add(v2_t v, v2_t vv) {
 
 v2_t v2_multiplyf(v2_t v, float k) {
 	return (v2_t){v.x * k, v.y * k};
+}
+
+v2_t v2_normalize(v2_t v) {
+	float r = sqrt(v.x * v.x + v.y * v.y);
+	if(r == 0.f) {
+		return v;
+	}
+
+	v.x /= r;
+	v.y /= r;
+
+	return v;
+}
+
+float v2_scalar(v2_t a, v2_t b) {
+	return a.x * b.x + a.y * b.y;
+}
+
+float v2_distance(v2_t a, v2_t b) {
+	float dx = b.x - a.x;
+	float dy = b.y - a.y;
+
+	return sqrt(dx * dx + dy * dy);
+}
+
+float v2_angle(v2_t a, v2_t b) {
+	float arc = sqrt((a.x * a.x + a.y * a.y) * (b.x * b.x + b.y * b.y));
+
+	if(arc > 0.f) {
+		arc = acos((a.x * b.x + a.y * b.y) / arc);
+
+		if(a.x * b.y - a.y * b.x < 0.f) {
+			arc *= -1;
+		}
+	}
+
+	return arc;
 }
 
 v3_t v3_cross(v3_t a, v3_t b) {

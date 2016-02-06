@@ -111,6 +111,22 @@ void key_pressed(GLFWwindow* w, int key, int scancode, int action, int mods) {
 	g->event(&g->c, ev);
 }
 
+void mouse(GLFWwindow* w, int button, int action, int mods) {
+	if(button == GLFW_MOUSE_BUTTON_LEFT) {
+		game_t* g = (game_t*)glfwGetWindowUserPointer(w);
+
+		double x, y;
+		glfwGetCursorPos(w, &x, &y);
+
+		game_event_t ev;
+		ev.type = EVENT_CLICK;
+		ev.clickX = (float)x;
+		ev.clickY = (float)y;
+
+		g->event(&g->c, ev);
+	}
+}
+
 int main(void) {
 	if(!glfwInit()) {
 		fputs("Can not init GLFW !\n", stderr);
@@ -126,8 +142,8 @@ int main(void) {
 	}
 
 	// TODO: Proper resolution settings
-	g.width = 640;
-	g.height = 480;
+	g.width = 1280;
+	g.height = 720;
 
 	GLFWwindow* w = glfwCreateWindow(g.width, g.height, "Game", 0, 0);
 	if(!w) {
@@ -140,7 +156,9 @@ int main(void) {
 	glfwMakeContextCurrent(w);
 	glfwSwapInterval(1);
 	glfwSetKeyCallback(w, key_pressed);
+	glfwSetMouseButtonCallback(w, mouse);
 	glfwSetWindowUserPointer(w, &g);
+	glfwSetInputMode(w, GLFW_STICKY_MOUSE_BUTTONS, 1);
 
 	if(glewInit() != GLEW_OK) {
 		fputs("Can not initialize OpenGL !\n", stderr);

@@ -17,10 +17,11 @@ rule ld
   description = LD: $out
 
 build build/game/game.o: cc src/game/game.c
+build build/game/entities.o: cc src/game/entities.c
 build build/game/renderer.o: cc src/game/renderer.c
 build build/game/math.o: cc src/game/math.c
 build build/game/utils.o: cc src/game/utils.c
-build build/game/game.so.temp: ldso build/game/game.o build/game/renderer.o build/game/math.o build/game/utils.o
+build build/game/game.so.temp: ldso build/game/game.o build/game/entities.o build/game/renderer.o build/game/math.o build/game/utils.o
 
 build build/glfw_game.o: cc src/glfw_game.c
 build build/exe: ld build/glfw_game.o

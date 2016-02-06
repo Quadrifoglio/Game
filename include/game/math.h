@@ -1,3 +1,7 @@
+#pragma once
+
+#include <math.h>
+
 typedef struct {
 	float x, y;
 } v2_t;
@@ -5,6 +9,10 @@ typedef struct {
 typedef struct {
 	float x, y, z;
 } v3_t;
+
+typedef struct {
+	float r, g, b, a;
+} c4_t;
 
 typedef struct {
 	float m11, m12, m13, m14;
@@ -15,6 +23,10 @@ typedef struct {
 
 v2_t v2_add(v2_t v, v2_t vv);
 v2_t v2_multiplyf(v2_t v, float k);
+v2_t v2_normalize(v2_t v);
+float v2_scalar(v2_t a, v2_t b);
+float v2_distance(v2_t a, v2_t b);
+float v2_angle(v2_t a, v2_t b);
 
 v3_t v3_cross(v3_t a, v3_t b);
 v3_t v3_normalize(v3_t v);
@@ -31,7 +43,7 @@ mat4_t mat4_translate2(v2_t v);
 mat4_t mat4_translate3(v3_t v);
 mat4_t mat4_scale2(v2_t v);
 mat4_t mat4_scale3(v3_t v);
-mat4_t mat4_sotate_x(float angle);
+mat4_t mat4_rotate_x(float angle);
 mat4_t mat4_rotate_y(float angle);
 mat4_t mat4_rotate_z(float angle);
 

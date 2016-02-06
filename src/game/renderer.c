@@ -101,6 +101,11 @@ void render_set_view(shaders_t* s, mat4_t m) {
 	glUniformMatrix4fv(loc, 1, GL_TRUE, &m.m11);
 }
 
+void render_set_model(shaders_t* s, mat4_t m) {
+	GLint loc = glGetUniformLocation(s->program, "model");
+	glUniformMatrix4fv(loc, 1, GL_TRUE, &m.m11);
+}
+
 mesh_t render_create_mesh(size_t count, float* vertices, float* colors) {
 	mesh_t m;
 	m.vertexCount = count;
