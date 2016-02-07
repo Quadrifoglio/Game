@@ -38,7 +38,7 @@ ship_t ent_ship_create(c4_t color) {
 void ent_ship_update(ship_t* s, float dt) {
 	float d = v2_distance(s->target, s->position);
 
-	printf("(%f ; %f) to (%f ; %f) = %f\n", s->position.x, s->position.y, s->target.x, s->target.y, d);
+	//printf("(%f ; %f) to (%f ; %f) = %f\n", s->position.x, s->position.y, s->target.x, s->target.y, d);
 
 	if(s->target.x != 0 && s->target.y != 0 && d) {
 		s->velocity.x = (s->target.x - s->position.x) / (v2_distance(s->position, s->target) / s->speed);

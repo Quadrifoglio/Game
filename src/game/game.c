@@ -89,8 +89,11 @@ void game_event(game_ctx_t* c, game_event_t ev) {
 		}
 	}
 	else if(ev.type == EVENT_CLICK) {
+		float x = (ev.clickX / UNIT_SIZE) - s->camera.x;
+		float y = (s->height - ev.clickY / UNIT_SIZE) - s->camera.y;
+
 		for(int i = 0; i < (int)s->shipCount; ++i) {
-			s->ships[i].target = (v2_t){ev.clickX / UNIT_SIZE, s->height - ev.clickY / UNIT_SIZE};
+			s->ships[i].target = (v2_t){x, y};
 		}
 	}
 }
