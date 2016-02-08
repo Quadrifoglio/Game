@@ -119,7 +119,9 @@ void game_render(game_ctx_t* c) {
 
 	render_clear_screen();
 
-	render_set_model(&s->shaders, mat4_identity());
+	v2_t v = {-s->camera.x, -s->camera.y};
+
+	render_set_model(&s->shaders, mat4_translate2(v));
 	render_draw_mesh(&s->shaders, &s->bg);
 
 	for(int i = 0; i < (int)s->baseCount; ++i) {
