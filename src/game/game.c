@@ -22,7 +22,7 @@ void game_init(game_ctx_t* c, int w, int h) {
 	s->camera.y = 0.f;
 	render_set_view(&s->shaders, mat4_translate2(s->camera));
 
-	int nstars = 100;
+	int nstars = 500;
 	float* v = malloc(nstars * 2 * sizeof(float));
 	float* cl = malloc(nstars * 2 * 4 * sizeof(float));
 	int n = 0, nn = 0;

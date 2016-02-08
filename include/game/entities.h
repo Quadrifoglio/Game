@@ -19,6 +19,7 @@ typedef struct {
 typedef struct {
 	v2_t position;
 	mesh_t mesh;
+	float rotation;
 } base_t;
 
 ship_t ent_ship_create(c4_t color);
