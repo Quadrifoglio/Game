@@ -112,7 +112,7 @@ void key_pressed(GLFWwindow* w, int key, int scancode, int action, int mods) {
 }
 
 void mouse(GLFWwindow* w, int button, int action, int mods) {
-	if(button == GLFW_MOUSE_BUTTON_LEFT) {
+	if(button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
 		game_t* g = (game_t*)glfwGetWindowUserPointer(w);
 
 		double x, y;

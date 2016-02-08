@@ -38,9 +38,8 @@ ship_t ent_ship_create(c4_t color) {
 void ent_ship_update(ship_t* s, float dt) {
 	float d = v2_distance(s->target, s->position);
 
-	//printf("(%f ; %f) to (%f ; %f) = %f\n", s->position.x, s->position.y, s->target.x, s->target.y, d);
-
-	if(s->target.x != 0 && s->target.y != 0 && d) {
+	// TODO: Proper stop at target (now: 0.2 units error)
+	if(s->target.x != 0 && s->target.y != 0 && d > 0.2f) {
 		s->velocity.x = (s->target.x - s->position.x) / (v2_distance(s->position, s->target) / s->speed);
 		s->velocity.y = (s->target.y - s->position.y) / (v2_distance(s->position, s->target) / s->speed);
 		s->rotation = -atan2(s->velocity.x, s->velocity.y);
