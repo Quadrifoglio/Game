@@ -147,24 +147,24 @@ base_t ent_base_create(c4_t color, v2_t position) {
 }
 
 void ent_base_update(base_t* b, float dt) {
-	//b->rotation = 0.111f;
+	b->rotation += dt * PI * 0.3f;
 }
 
 void ent_base_render(shaders_t* sh, base_t* b) {
-	v2_t p = {b->position.x - SHIP_WIDTH / 2.f, b->position.y - SHIP_HEIGHT / 2.f};
+	v2_t p = {b->position.x - BASE_WIDTH / 2.f, b->position.y - SHIP_HEIGHT / 2.f};
 	mat4_t model = mat4_identity();
 
 	mat4_t t = mat4_translate2(p);
 	model = mat4_multiply(&model, &t);
 
 	if(b->rotation != 0.f && b->rotation != 2 * PI) {
-		t = mat4_translate2((v2_t){SHIP_WIDTH / 2.f, SHIP_HEIGHT / 2.f});
+		t = mat4_translate2((v2_t){BASE_WIDTH / 2.f, SHIP_HEIGHT / 2.f});
 		model = mat4_multiply(&model, &t);
 
 		mat4_t r = mat4_rotate_z(b->rotation);
 		model = mat4_multiply(&model, &r);
 
-		t = mat4_translate2((v2_t){-SHIP_WIDTH / 2.f, -SHIP_HEIGHT / 2.f});
+		t = mat4_translate2((v2_t){-BASE_WIDTH / 2.f, -SHIP_HEIGHT / 2.f});
 		model = mat4_multiply(&model, &t);
 	}
 

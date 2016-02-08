@@ -5,6 +5,8 @@
 #define SHIP_WIDTH 1.f
 #define SHIP_HEIGHT 2.f
 
+#define BASE_WIDTH 2.5f
+
 typedef struct {
 	mesh_t mesh;
 
