@@ -23,27 +23,28 @@ void game_init(game_ctx_t* c, int w, int h) {
 	render_set_view(&s->shaders, mat4_translate2(s->camera));
 
 	int nstars = 500;
-	float* v = malloc(nstars * 2 * sizeof(float));
-	float* cl = malloc(nstars * 2 * 4 * sizeof(float));
 	int n = 0, nn = 0;
+	vertices_t bgv;
+
+	bgv.v = malloc(nstars * 2 * sizeof(float));
+	bgv.c = malloc(nstars * 2 * 4 * sizeof(float));
+	bgv.count = nstars;
 
 	for(int i = 0; i < nstars; ++i) {
 		float x = rand_float(0.f, s->width);
 		float y = rand_float(0.f, s->height);
 
-		v[n++] = x;
-		v[n++] = y;
+		bgv.v[n++] = x;
+		bgv.v[n++] = y;
 
-		cl[nn++] = 1.f;
-		cl[nn++] = 1.f;
-		cl[nn++] = 1.f;
-		cl[nn++] = 1.f;
+		bgv.c[nn++] = 1.f;
+		bgv.c[nn++] = 1.f;
+		bgv.c[nn++] = 1.f;
+		bgv.c[nn++] = 1.f;
 	}
 
-	s->bg = render_create_mesh(GL_POINTS, nstars * 2, v, cl);
-
-	free(v);
-	free(cl);
+	s->bg = render_create_mesh(GL_POINTS, &bgv);
+	render_dispose_vertices(&bgv);
 
 	c4_t color = {1.f, 1.f, 1.f, 1.f};
 	s->bases[0] = ent_base_create(color, (v2_t){40.f, 22.5f});

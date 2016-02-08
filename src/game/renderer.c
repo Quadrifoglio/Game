@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "game/utils.h"
 
 void render_set_viewport(int w, int h) {
@@ -82,6 +83,52 @@ exit:
 	return s;
 }
 
+// TODO: Improve color management (now: one color per vertex file)
+vertices_t render_load_vertices(char* path, c4_t defColor) {
+	vertices_t v = {0};
+
+	FILE* f = fopen(path, "r");
+	if(!f) {
+		return v;
+	}
+
+	int n = 0;
+	char line[1024];
+	int vi = 0, ci = 0;
+
+	while(fgets(line, 1024, f)) {
+		if(strstr(line, ";") == 0) {
+			continue;
+		}
+
+		float vv[2];
+
+		for(int i = 1; i <= 2; ++i) {
+			char* l = strdup(line);
+			char* vs = file_get_csv_tok(l, i);
+			vv[i - 1] = strtof(vs, 0);
+
+			free(l);
+		}
+
+		n++;
+		v.count++;
+
+		v.v = realloc(v.v, n * 2 * sizeof(float));
+		v.v[vi++] = vv[0];
+		v.v[vi++] = vv[1];
+
+		v.c = realloc(v.c, n * 4 * sizeof(float));
+		v.c[ci++] = defColor.r;
+		v.c[ci++] = defColor.g;
+		v.c[ci++] = defColor.b;
+		v.c[ci++] = defColor.a;
+	}
+
+	fclose(f);
+	return v;
+}
+
 void render_clear_screen(void) {
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -106,19 +153,19 @@ void render_set_model(shaders_t* s, mat4_t m) {
 	glUniformMatrix4fv(loc, 1, GL_TRUE, &m.m11);
 }
 
-mesh_t render_create_mesh(GLenum t, size_t vcount, float* v, float* c) {
+mesh_t render_create_mesh(GLenum t, vertices_t* v) {
 	mesh_t m;
-	m.vertexCount = vcount;
+	m.vertexCount = v->count;
 	m.type = t;
 
 	glGenBuffers(1, &m.vbuffer);
 	glGenBuffers(1, &m.cbuffer);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m.vbuffer);
-	glBufferData(GL_ARRAY_BUFFER, vcount * 2 * sizeof(float), v, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, v->count * 2 * sizeof(float), v->v, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m.cbuffer);
-	glBufferData(GL_ARRAY_BUFFER, vcount * 4 * sizeof(float), c, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, v->count * 4 * sizeof(float), v->c, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	return m;
@@ -140,5 +187,14 @@ void render_check_errors(void) {
 	GLenum err = glGetError();
 	if(err != GL_NO_ERROR) {
 		printf("OpenGL error: 0x%x\n", err);
+	}
+}
+
+void render_dispose_vertices(vertices_t* v) {
+	if(v->v) {
+		free(v->v);
+	}
+	if(v->c) {
+		free(v->c);
 	}
 }

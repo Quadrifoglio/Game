@@ -3,26 +3,9 @@
 ship_t ent_ship_create(c4_t color) {
 	ship_t s;
 
-	float v[6 * 2] = {
-		0.5f, 0.f,
-		0.f, 0.5f,
-		0.5f, 2.f,
+	vertices_t bv = render_load_vertices("meshes/ship.mesh", color);
+	s.mesh = render_create_mesh(GL_TRIANGLES, &bv);
 
-		0.5f, 0.f,
-		1.f, 0.5f,
-		0.5f, 2.f
-	};
-
-	float cl[6 * 4] = {
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a
-	};
-
-	s.mesh = render_create_mesh(GL_TRIANGLES, 6, v, cl);
 	s.position.x = 0.f;
 	s.position.y = 0.f;
 	s.velocity.x = 0.f;
@@ -32,6 +15,7 @@ ship_t ent_ship_create(c4_t color) {
 	s.speed = 4.f;
 	s.rotation = 0.f;
 
+	render_dispose_vertices(&bv);
 	return s;
 }
 
@@ -78,71 +62,13 @@ void ent_ship_render(shaders_t* sh, ship_t* s) {
 base_t ent_base_create(c4_t color, v2_t position) {
 	base_t b;
 
-	float v[8 * 3 * 2] = {
-		1.f / 1.5f, 0.f / 1.5f,
-		1.f / 1.5f, 2.5 / 1.5f,
-		0.f / 1.5f, 1.f / 1.5f,
+	vertices_t vv = render_load_vertices("meshes/base.mesh", color);
+	b.mesh = render_create_mesh(GL_TRIANGLES, &vv);
 
-		1.f / 1.5f, 2.5 / 1.5f,
-		0.f / 1.5f, 2.5 / 1.5f,
-		0.f / 1.5f, 1.f / 1.5f,
-
-		0.f / 1.5f, 2.5 / 1.5f,
-		1.f / 1.5f, 2.5 / 1.5f,
-		1.f / 1.5f, 3.5 / 1.5f,
-
-		1.f / 1.5f, 0.f / 1.5f,
-		2.5f / 1.5f, 0.f / 1.5f,
-		1.f / 1.5f, 3.5 / 1.5f,
-
-		2.5 / 1.5f, 3.5 / 1.5f,
-		1.f / 1.5f, 3.5 / 1.5f,
-		2.5 / 1.5f, 0.f / 1.5f,
-
-		2.5 / 1.5f, 2.5 / 1.5f,
-		3.5 / 1.5f, 2.5 / 1.5f,
-		2.5 / 1.5f, 3.5 / 1.5f,
-
-		3.5 / 1.5f, 2.5 / 1.5f,
-		2.5 / 1.5f, 2.5 / 1.5f,
-		3.5 / 1.5f, 1.f / 1.5f,
-
-		2.5 / 1.5f, 2.5 / 1.5f,
-		2.5 / 1.5f, 0.f / 1.5f,
-		3.5 / 1.5f, 1.f / 1.5f
-	};
-
-	float c[8 * 3 * 4] = {
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-		color.r, color.g, color.b, color.a,
-	};
-
-	b.mesh = render_create_mesh(GL_TRIANGLES, 8 * 3, v, c);
 	b.position = position;
 	b.rotation = 0;
 
+	render_dispose_vertices(&vv);
 	return b;
 }
 
