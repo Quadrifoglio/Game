@@ -145,6 +145,8 @@ int main(void) {
 	g.width = 1280;
 	g.height = 720;
 
+	glfwWindowHint(GLFW_RESIZABLE, false);
+
 	GLFWwindow* w = glfwCreateWindow(g.width, g.height, "Game", 0, 0);
 	if(!w) {
 		fputs("Can not create window", stderr);

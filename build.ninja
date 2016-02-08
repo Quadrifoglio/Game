@@ -1,5 +1,5 @@
 cc = clang
-cflags = -g -I include -Wall -Wextra -Wno-missing-field-initializers
+cflags = -g -I include -Wall -Wextra -Wno-missing-field-initializers -Wno-unused-parameter
 
 gameLibs = -lGL
 exeLibs = -ldl -lglfw -lGLEW

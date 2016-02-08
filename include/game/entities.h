@@ -6,13 +6,14 @@
 #define SHIP_HEIGHT 2.f
 
 typedef struct {
+	mesh_t mesh;
+
 	v2_t position;
 	v2_t velocity;
-	v2_t target;
-	float speed;
 	float rotation;
 
-	mesh_t mesh;
+	v2_t target;
+	float speed;
 } ship_t;
 
 typedef struct {
