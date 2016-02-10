@@ -25,7 +25,10 @@ void game_init(game_ctx_t* c, int w, int h) {
 		255, 255, 255,    255, 255, 255,
 		255, 255, 255,    255, 255, 255
 	};
-	s->defTexture = render_texture_create(pixels, 2, 2);
+	s->defTexture = render_texture_create(pixels, 2, 2, GL_RGB);
+
+	s->font = render_font_load("res/times.ttf");
+	s->text = render_font_text(&s->font, "Pute", 0.f, -10.f);
 
 	vertices_t bgv;
 	int nstars = 500;
@@ -129,10 +132,13 @@ void game_render(game_ctx_t* c) {
 
 	render_clear_screen();
 	render_shaders_bind(&s->shaders);
-	render_texture_bind(&s->shaders, &s->defTexture);
 
 	v2_t v = {-s->camera.x, -s->camera.y};
 	render_set_model(&s->shaders, mat4_translate2(v));
+
+	render_texture_bind(&s->shaders, &s->font.tex);
+	render_mesh_draw(&s->shaders, &s->text);
+	render_texture_bind(&s->shaders, &s->defTexture);
 
 	render_mesh_draw(&s->shaders, &s->bg);
 

@@ -84,13 +84,13 @@ void ent_base_render(shaders_t* sh, base_t* b) {
 	model = mat4_multiply(&model, &t);
 
 	if(b->rotation != 0.f && b->rotation != 2 * PI) {
-		t = mat4_translate2((v2_t){BASE_WIDTH / 2.f, SHIP_HEIGHT / 2.f});
+		t = mat4_translate2((v2_t){BASE_WIDTH / 2.f, BASE_HEIGHT / 2.f});
 		model = mat4_multiply(&model, &t);
 
 		mat4_t r = mat4_rotate_z(b->rotation);
 		model = mat4_multiply(&model, &r);
 
-		t = mat4_translate2((v2_t){-BASE_WIDTH / 2.f, -SHIP_HEIGHT / 2.f});
+		t = mat4_translate2((v2_t){-BASE_WIDTH / 2.f, -BASE_HEIGHT / 2.f});
 		model = mat4_multiply(&model, &t);
 	}
 

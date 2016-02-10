@@ -12,6 +12,9 @@ typedef struct {
 	shaders_t shaders;
 	texture_t defTexture;
 
+	font_t font;
+	mesh_t text;
+
 	v2_t cameraVel;
 	v2_t camera;
 
