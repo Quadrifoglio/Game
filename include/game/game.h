@@ -4,8 +4,6 @@
 #include "game/renderer.h"
 #include "game/entities.h"
 
-#define UNIT_SIZE 16.f
-
 typedef struct {
 	float width, height;
 

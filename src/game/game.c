@@ -27,8 +27,8 @@ void game_init(game_ctx_t* c, int w, int h) {
 	};
 	s->defTexture = render_texture_create(pixels, 2, 2, GL_RGB);
 
-	s->font = render_font_load("res/times.ttf");
-	s->text = render_font_text(&s->font, "Pute", 0.f, -10.f);
+	s->font = render_font_load("res/font.ttf");
+	s->text = render_font_text(&s->font, "niktamer !!", 0.f, UNIT_SIZE * 1.5f);
 
 	vertices_t bgv;
 	int nstars = 500;
@@ -134,12 +134,14 @@ void game_render(game_ctx_t* c) {
 	render_shaders_bind(&s->shaders);
 
 	v2_t v = {-s->camera.x, -s->camera.y};
-	render_set_model(&s->shaders, mat4_translate2(v));
+	mat4_t m = mat4_translate2(v);
+	render_set_model(&s->shaders, m);
 
 	render_texture_bind(&s->shaders, &s->font.tex);
 	render_mesh_draw(&s->shaders, &s->text);
-	render_texture_bind(&s->shaders, &s->defTexture);
 
+	render_set_model(&s->shaders, m);
+	render_texture_bind(&s->shaders, &s->defTexture);
 	render_mesh_draw(&s->shaders, &s->bg);
 
 	for(int i = 0; i < (int)s->baseCount; ++i) {

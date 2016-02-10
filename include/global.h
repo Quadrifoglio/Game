@@ -8,6 +8,8 @@
 
 #define PI 3.14159265359f
 
+#define UNIT_SIZE 16.f
+
 #define DIRECTION_UP    1
 #define DIRECTION_RIGHT 2
 #define DIRECTION_DOWN  3

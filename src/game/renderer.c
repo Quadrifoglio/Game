@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "game/renderer.h"
 #include "game/utils.h"
 
 #define STB_TRUETYPE_IMPLEMENTATION 1
@@ -242,8 +243,8 @@ void render_mesh_draw(shaders_t* s, mesh_t* m) {
 
 font_t render_font_load(char* path) {
 	font_t f;
-	f.bw = 2048;
-	f.bh = 1024;
+	f.bw = 512;
+	f.bh = 512;
 
 	char* data = load_file_str(path);
 	if(!data) {
@@ -256,9 +257,8 @@ font_t render_font_load(char* path) {
 	f.firstChar = 32;
 
 	int s = stbtt_BakeFontBitmap((const unsigned char*)data, 0, 32.f, bitmap, f.bw, f.bh, f.firstChar, nchar, f.cdata);
-	printf("%d\n", s);
 
-	f.tex = render_texture_create(bitmap, f.bw, f.bh, GL_ALPHA);
+	f.tex = render_texture_create(bitmap, f.bw, f.bh, GL_RED);
 	glBindTexture(GL_TEXTURE_2D, f.tex.id);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -286,7 +286,7 @@ mesh_t render_font_text(font_t* f, unsigned char* str, float x, float y) {
 
 			// Vertex 1
 			v.v[vi++] = q.x0;
-			v.v[vi++] = 45.f - (32.f + q.y0);
+			v.v[vi++] = q.y0;
 
 			v.c[ci++] = 1.f;
 			v.c[ci++] = 1.f;
@@ -298,7 +298,7 @@ mesh_t render_font_text(font_t* f, unsigned char* str, float x, float y) {
 
 			// Vertex 2
 			v.v[vi++] = q.x1;
-			v.v[vi++] = 45.f - (32.f + q.y0);
+			v.v[vi++] = q.y0;
 
 			v.c[ci++] = 1.f;
 			v.c[ci++] = 1.f;
@@ -310,7 +310,7 @@ mesh_t render_font_text(font_t* f, unsigned char* str, float x, float y) {
 
 			// Vertex 3
 			v.v[vi++] = q.x1;
-			v.v[vi++] = 45.f - (32.f + q.y1);
+			v.v[vi++] = q.y1;
 
 			v.c[ci++] = 1.f;
 			v.c[ci++] = 1.f;
@@ -322,7 +322,7 @@ mesh_t render_font_text(font_t* f, unsigned char* str, float x, float y) {
 
 			// Vertex 4
 			v.v[vi++] = q.x0;
-			v.v[vi++] = 45.f - (32.f + q.y1);
+			v.v[vi++] = q.y1;
 
 			v.c[ci++] = 1.f;
 			v.c[ci++] = 1.f;
@@ -338,32 +338,6 @@ mesh_t render_font_text(font_t* f, unsigned char* str, float x, float y) {
 			v.count += 4;
 		}
 	}
-
-	/*float vv[] = {
-		0.f, 0.f,
-		15.f, 0.f,
-		15.f, 15.f,
-		0.f, 15.f
-	};
-
-	float cc[] = {
-		1.f, 1.f, 1.f, 1.f,
-		1.f, 1.f, 1.f, 1.f,
-		1.f, 1.f, 1.f, 1.f,
-		1.f, 1.f, 1.f, 1.f
-	};
-
-	float tt[] = {
-		0.f, 0.f,
-		1.f, 0.f,
-		1.f, 1.f,
-		0.f, 1.f
-	};
-
-	v.v = vv;
-	v.c = cc;
-	v.t = tt;
-	v.count = 4;*/
 
 	mesh_t m = render_mesh_create(GL_QUADS, &v);
 	render_vertices_dispose(&v);
