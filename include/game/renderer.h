@@ -11,17 +11,24 @@ typedef struct {
 
 	GLint position;
 	GLint color;
+	GLint tex;
 } shaders_t;
+
+typedef struct {
+	GLuint id;
+} texture_t;
 
 typedef struct {
 	float* v;
 	float* c;
+	float* t;
 	size_t count;
 } vertices_t;
 
 typedef struct {
 	GLuint vbuffer;
 	GLuint cbuffer;
+	GLuint tbuffer;
 
 	GLenum type;
 	size_t vertexCount;
@@ -39,6 +46,9 @@ void render_bind_shaders(shaders_t* s);
 void render_set_projection(shaders_t* s, mat4_t m);
 void render_set_view(shaders_t* s, mat4_t v);
 void render_set_model(shaders_t* s, mat4_t m);
+
+texture_t render_create_texture(u8* data, size_t w, size_t h);
+void render_bind_texture(shaders_t*s, texture_t* t);
 
 mesh_t render_create_mesh(GLenum t, vertices_t* v);
 void render_draw_mesh(shaders_t* s, mesh_t* m);

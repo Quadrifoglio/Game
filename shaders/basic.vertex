@@ -6,10 +6,14 @@ uniform mat4 proj;
 
 attribute vec2 position;
 attribute vec4 color;
+attribute vec2 tex;
 
 varying vec4 outColor;
+varying vec2 outTex;
 
 void main() {
 	outColor = color;
+	outTex = tex;
+
 	gl_Position = proj * view * model * vec4(position, 0.0, 1.0);
 }

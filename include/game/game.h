@@ -8,7 +8,9 @@
 
 typedef struct {
 	float width, height;
+
 	shaders_t shaders;
+	texture_t defTexture;
 
 	v2_t cameraVel;
 	v2_t camera;

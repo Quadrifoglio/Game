@@ -18,16 +18,22 @@ void game_init(game_ctx_t* c, int w, int h) {
 	mat4_t projection = mat4_ortho_projection(0.f, s->width, 0.f, s->height, 1.f, -1.f);
 	render_set_projection(&s->shaders, projection);
 
-	s->camera.x = 0.f;
-	s->camera.y = 0.f;
+	s->camera = (v2_t){0.f, 0.f};
 	render_set_view(&s->shaders, mat4_translate2(s->camera));
 
-	int nstars = 500;
-	int n = 0, nn = 0;
+	u8 pixels[2 * 2 * 3] = {
+		255, 255, 255,    255, 255, 255,
+		255, 255, 255,    255, 255, 255
+	};
+	s->defTexture = render_create_texture(pixels, 2, 2);
+
 	vertices_t bgv;
+	int nstars = 500;
+	int n = 0, nn = 0, nnn = 0;
 
 	bgv.v = malloc(nstars * 2 * sizeof(float));
 	bgv.c = malloc(nstars * 2 * 4 * sizeof(float));
+	bgv.t = malloc(nstars * 2 * sizeof(float));
 	bgv.count = nstars;
 
 	for(int i = 0; i < nstars; ++i) {
@@ -41,6 +47,9 @@ void game_init(game_ctx_t* c, int w, int h) {
 		bgv.c[nn++] = 1.f;
 		bgv.c[nn++] = 1.f;
 		bgv.c[nn++] = 1.f;
+
+		bgv.t[nnn++] = 0.f;
+		bgv.t[nnn++] = 0.f;
 	}
 
 	s->bg = render_create_mesh(GL_POINTS, &bgv);
@@ -119,10 +128,12 @@ void game_render(game_ctx_t* c) {
 	game_state_t* s = (game_state_t*)c->storage;
 
 	render_clear_screen();
+	render_bind_shaders(&s->shaders);
+	render_bind_texture(&s->shaders, &s->defTexture);
 
 	v2_t v = {-s->camera.x, -s->camera.y};
-
 	render_set_model(&s->shaders, mat4_translate2(v));
+
 	render_draw_mesh(&s->shaders, &s->bg);
 
 	for(int i = 0; i < (int)s->baseCount; ++i) {

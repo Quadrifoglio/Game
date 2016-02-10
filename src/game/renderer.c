@@ -72,9 +72,11 @@ shaders_t render_load_shaders(char* vertexPath, char* fragmentPath) {
 
 	s.position = glGetAttribLocation(s.program, "position");
 	s.color = glGetAttribLocation(s.program, "color");
+	s.tex = glGetAttribLocation(s.program, "tex");
 
 	glEnableVertexAttribArray(s.position);
 	glEnableVertexAttribArray(s.color);
+	glEnableVertexAttribArray(s.tex);
 
 exit:
 	free(fcode);
@@ -94,7 +96,7 @@ vertices_t render_load_vertices(char* path, c4_t defColor) {
 
 	int n = 0;
 	char line[1024];
-	int vi = 0, ci = 0;
+	int vi = 0, ci = 0, ti = 0;
 
 	while(fgets(line, 1024, f)) {
 		if(strstr(line, ";") == 0) {
@@ -123,6 +125,10 @@ vertices_t render_load_vertices(char* path, c4_t defColor) {
 		v.c[ci++] = defColor.g;
 		v.c[ci++] = defColor.b;
 		v.c[ci++] = defColor.a;
+
+		v.t = realloc(v.t, n * 2 * sizeof(float));
+		v.t[ti++] = 0.f;
+		v.t[ti++] = 0.f;
 	}
 
 	fclose(f);
@@ -153,6 +159,35 @@ void render_set_model(shaders_t* s, mat4_t m) {
 	glUniformMatrix4fv(loc, 1, GL_TRUE, &m.m11);
 }
 
+texture_t render_create_texture(u8* data, size_t w, size_t h) {
+	texture_t t;
+
+	glEnable(GL_TEXTURE_2D);
+
+	glGenTextures(1, &t.id);
+	glBindTexture(GL_TEXTURE_2D, t.id);
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+
+	glTexImage2D(GL_TEXTURE_2D, 0, 3, w, h, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+
+	return t;
+}
+
+void render_bind_texture(shaders_t* s, texture_t* t) {
+	if(!t) {
+		glBindTexture(GL_TEXTURE_2D, 0);
+	}
+	else {
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, t->id);
+
+		GLint l = glGetUniformLocation(s->program, "texSampler");
+		glUniform1i(l, 0);
+	}
+}
+
 mesh_t render_create_mesh(GLenum t, vertices_t* v) {
 	mesh_t m;
 	m.vertexCount = v->count;
@@ -160,12 +195,16 @@ mesh_t render_create_mesh(GLenum t, vertices_t* v) {
 
 	glGenBuffers(1, &m.vbuffer);
 	glGenBuffers(1, &m.cbuffer);
+	glGenBuffers(1, &m.tbuffer);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m.vbuffer);
 	glBufferData(GL_ARRAY_BUFFER, v->count * 2 * sizeof(float), v->v, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, m.cbuffer);
 	glBufferData(GL_ARRAY_BUFFER, v->count * 4 * sizeof(float), v->c, GL_STATIC_DRAW);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m.tbuffer);
+	glBufferData(GL_ARRAY_BUFFER, v->count * 2 * sizeof(float), v->t, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	return m;
@@ -177,6 +216,9 @@ void render_draw_mesh(shaders_t* s, mesh_t* m) {
 
 	glBindBuffer(GL_ARRAY_BUFFER, m->cbuffer);
 	glVertexAttribPointer(s->color, 4, GL_FLOAT, GL_FALSE, 0, 0);
+
+	glBindBuffer(GL_ARRAY_BUFFER, m->tbuffer);
+	glVertexAttribPointer(s->tex, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
 	glDrawArrays(m->type, 0, m->vertexCount);
 
@@ -196,5 +238,8 @@ void render_dispose_vertices(vertices_t* v) {
 	}
 	if(v->c) {
 		free(v->c);
+	}
+	if(v->t) {
+		free(v->t);
 	}
 }
