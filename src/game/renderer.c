@@ -5,11 +5,12 @@
 #include <string.h>
 #include "game/utils.h"
 
-void render_set_viewport(int w, int h) {
-	glViewport(0, 0, w, h);
+void render_clear_screen(void) {
+	glClearColor(0.f, 0.f, 0.f, 1.f);
+	glClear(GL_COLOR_BUFFER_BIT);
 }
 
-shaders_t render_load_shaders(char* vertexPath, char* fragmentPath) {
+shaders_t render_shaders_load(char* vertexPath, char* fragmentPath) {
 	shaders_t s;
 
 	char* vcode = load_file_str(vertexPath);
@@ -85,8 +86,12 @@ exit:
 	return s;
 }
 
+void render_shaders_bind(shaders_t* s) {
+	glUseProgram(s->program);
+}
+
 // TODO: Improve color management (now: one color per vertex file)
-vertices_t render_load_vertices(char* path, c4_t defColor) {
+vertices_t render_vertices_load(char* path, c4_t defColor) {
 	vertices_t v = {0};
 
 	FILE* f = fopen(path, "r");
@@ -135,13 +140,20 @@ vertices_t render_load_vertices(char* path, c4_t defColor) {
 	return v;
 }
 
-void render_clear_screen(void) {
-	glClearColor(0.f, 0.f, 0.f, 1.f);
-	glClear(GL_COLOR_BUFFER_BIT);
+void render_vertices_dispose(vertices_t* v) {
+	if(v->v) {
+		free(v->v);
+	}
+	if(v->c) {
+		free(v->c);
+	}
+	if(v->t) {
+		free(v->t);
+	}
 }
 
-void render_bind_shaders(shaders_t* s) {
-	glUseProgram(s->program);
+void render_set_viewport(int w, int h) {
+	glViewport(0, 0, w, h);
 }
 
 void render_set_projection(shaders_t* s, mat4_t m) {
@@ -159,7 +171,7 @@ void render_set_model(shaders_t* s, mat4_t m) {
 	glUniformMatrix4fv(loc, 1, GL_TRUE, &m.m11);
 }
 
-texture_t render_create_texture(u8* data, size_t w, size_t h) {
+texture_t render_texture_create(u8* data, size_t w, size_t h) {
 	texture_t t;
 
 	glEnable(GL_TEXTURE_2D);
@@ -175,7 +187,7 @@ texture_t render_create_texture(u8* data, size_t w, size_t h) {
 	return t;
 }
 
-void render_bind_texture(shaders_t* s, texture_t* t) {
+void render_texture_bind(shaders_t* s, texture_t* t) {
 	if(!t) {
 		glBindTexture(GL_TEXTURE_2D, 0);
 	}
@@ -188,7 +200,7 @@ void render_bind_texture(shaders_t* s, texture_t* t) {
 	}
 }
 
-mesh_t render_create_mesh(GLenum t, vertices_t* v) {
+mesh_t render_mesh_create(GLenum t, vertices_t* v) {
 	mesh_t m;
 	m.vertexCount = v->count;
 	m.type = t;
@@ -210,7 +222,7 @@ mesh_t render_create_mesh(GLenum t, vertices_t* v) {
 	return m;
 }
 
-void render_draw_mesh(shaders_t* s, mesh_t* m) {
+void render_mesh_draw(shaders_t* s, mesh_t* m) {
 	glBindBuffer(GL_ARRAY_BUFFER, m->vbuffer);
 	glVertexAttribPointer(s->position, 2, GL_FLOAT, GL_FALSE, 0, 0);
 
@@ -229,17 +241,5 @@ void render_check_errors(void) {
 	GLenum err = glGetError();
 	if(err != GL_NO_ERROR) {
 		printf("OpenGL error: 0x%x\n", err);
-	}
-}
-
-void render_dispose_vertices(vertices_t* v) {
-	if(v->v) {
-		free(v->v);
-	}
-	if(v->c) {
-		free(v->c);
-	}
-	if(v->t) {
-		free(v->t);
 	}
 }

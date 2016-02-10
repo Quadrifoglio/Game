@@ -12,8 +12,8 @@ void game_init(game_ctx_t* c, int w, int h) {
 	s->height = (float)h / UNIT_SIZE;
 	render_set_viewport(w, h);
 
-	s->shaders = render_load_shaders("shaders/basic.vertex", "shaders/basic.fragment");
-	render_bind_shaders(&s->shaders);
+	s->shaders = render_shaders_load("shaders/basic.vertex", "shaders/basic.fragment");
+	render_shaders_bind(&s->shaders);
 
 	mat4_t projection = mat4_ortho_projection(0.f, s->width, 0.f, s->height, 1.f, -1.f);
 	render_set_projection(&s->shaders, projection);
@@ -25,7 +25,7 @@ void game_init(game_ctx_t* c, int w, int h) {
 		255, 255, 255,    255, 255, 255,
 		255, 255, 255,    255, 255, 255
 	};
-	s->defTexture = render_create_texture(pixels, 2, 2);
+	s->defTexture = render_texture_create(pixels, 2, 2);
 
 	vertices_t bgv;
 	int nstars = 500;
@@ -52,8 +52,8 @@ void game_init(game_ctx_t* c, int w, int h) {
 		bgv.t[nnn++] = 0.f;
 	}
 
-	s->bg = render_create_mesh(GL_POINTS, &bgv);
-	render_dispose_vertices(&bgv);
+	s->bg = render_mesh_create(GL_POINTS, &bgv);
+	render_vertices_dispose(&bgv);
 
 	c4_t color = {1.f, 1.f, 1.f, 1.f};
 	s->bases[0] = ent_base_create(color, (v2_t){40.f, 22.5f});
@@ -128,13 +128,13 @@ void game_render(game_ctx_t* c) {
 	game_state_t* s = (game_state_t*)c->storage;
 
 	render_clear_screen();
-	render_bind_shaders(&s->shaders);
-	render_bind_texture(&s->shaders, &s->defTexture);
+	render_shaders_bind(&s->shaders);
+	render_texture_bind(&s->shaders, &s->defTexture);
 
 	v2_t v = {-s->camera.x, -s->camera.y};
 	render_set_model(&s->shaders, mat4_translate2(v));
 
-	render_draw_mesh(&s->shaders, &s->bg);
+	render_mesh_draw(&s->shaders, &s->bg);
 
 	for(int i = 0; i < (int)s->baseCount; ++i) {
 		ent_base_render(&s->shaders, &s->bases[i]);

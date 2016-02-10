@@ -34,23 +34,23 @@ typedef struct {
 	size_t vertexCount;
 } mesh_t;
 
-vertices_t render_load_vertices(char* path, c4_t defColor);
-void render_dispose_vertices(vertices_t* v);
-
-void render_set_viewport(int w, int h);
 void render_clear_screen(void);
 
-shaders_t render_load_shaders(char* vertexPath, char* fragmentPath);
-void render_bind_shaders(shaders_t* s);
+vertices_t render_vertices_load(char* path, c4_t defColor);
+void render_vertices_dispose(vertices_t* v);
 
+shaders_t render_shaders_load(char* vertexPath, char* fragmentPath);
+void render_shaders_bind(shaders_t* s);
+
+void render_set_viewport(int w, int h);
 void render_set_projection(shaders_t* s, mat4_t m);
 void render_set_view(shaders_t* s, mat4_t v);
 void render_set_model(shaders_t* s, mat4_t m);
 
-texture_t render_create_texture(u8* data, size_t w, size_t h);
-void render_bind_texture(shaders_t*s, texture_t* t);
+texture_t render_texture_create(u8* data, size_t w, size_t h);
+void render_texture_bind(shaders_t*s, texture_t* t);
 
-mesh_t render_create_mesh(GLenum t, vertices_t* v);
-void render_draw_mesh(shaders_t* s, mesh_t* m);
+mesh_t render_mesh_create(GLenum t, vertices_t* v);
+void render_mesh_draw(shaders_t* s, mesh_t* m);
 
 void render_check_errors(void);

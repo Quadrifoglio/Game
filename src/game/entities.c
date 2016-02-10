@@ -3,8 +3,8 @@
 ship_t ent_ship_create(c4_t color) {
 	ship_t s;
 
-	vertices_t bv = render_load_vertices("meshes/ship.mesh", color);
-	s.mesh = render_create_mesh(GL_TRIANGLES, &bv);
+	vertices_t bv = render_vertices_load("meshes/ship.mesh", color);
+	s.mesh = render_mesh_create(GL_TRIANGLES, &bv);
 
 	s.position.x = 0.f;
 	s.position.y = 0.f;
@@ -15,7 +15,7 @@ ship_t ent_ship_create(c4_t color) {
 	s.speed = 4.f;
 	s.rotation = 0.f;
 
-	render_dispose_vertices(&bv);
+	render_vertices_dispose(&bv);
 	return s;
 }
 
@@ -56,19 +56,19 @@ void ent_ship_render(shaders_t* sh, ship_t* s) {
 	}
 
 	render_set_model(sh, model);
-	render_draw_mesh(sh, &s->mesh);
+	render_mesh_draw(sh, &s->mesh);
 }
 
 base_t ent_base_create(c4_t color, v2_t position) {
 	base_t b;
 
-	vertices_t vv = render_load_vertices("meshes/base.mesh", color);
-	b.mesh = render_create_mesh(GL_TRIANGLES, &vv);
+	vertices_t vv = render_vertices_load("meshes/base.mesh", color);
+	b.mesh = render_mesh_create(GL_TRIANGLES, &vv);
 
 	b.position = position;
 	b.rotation = 0;
 
-	render_dispose_vertices(&vv);
+	render_vertices_dispose(&vv);
 	return b;
 }
 
@@ -95,5 +95,5 @@ void ent_base_render(shaders_t* sh, base_t* b) {
 	}
 
 	render_set_model(sh, model);
-	render_draw_mesh(sh, &b->mesh);
+	render_mesh_draw(sh, &b->mesh);
 }
