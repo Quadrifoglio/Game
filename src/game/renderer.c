@@ -6,8 +6,8 @@
 #include "game/renderer.h"
 #include "game/utils.h"
 
-#define STB_TRUETYPE_IMPLEMENTATION 1
-#include "lib/stb_truetype.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "lib/stb_image.h"
 
 void render_clear_screen(void) {
 	glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -158,6 +158,9 @@ void render_vertices_dispose(vertices_t* v) {
 
 void render_set_viewport(int w, int h) {
 	glViewport(0, 0, w, h);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void render_set_projection(shaders_t* s, mat4_t m) {
@@ -243,101 +246,127 @@ void render_mesh_draw(shaders_t* s, mesh_t* m) {
 
 font_t render_font_load(char* path) {
 	font_t f;
-	f.bw = 512;
-	f.bh = 512;
+	f.rows = 14;
+	f.cols = 16;
+	f.size = 32.f;
+	int n;
 
-	char* data = load_file_str(path);
+	u8* data = stbi_load(path, (int*)&f.bw, (int*)&f.bh, &n, 0);
 	if(!data) {
 		return f;
 	}
 
-	int nchar = 96;
-	u8* bitmap = malloc(f.bw * f.bh);
-	f.cdata = malloc(nchar * sizeof(stbtt_bakedchar));
-	f.firstChar = 32;
+	f.tex = render_texture_create(data, f.bw, f.bh, GL_RGBA);
+	stbi_image_free(data);
 
-	int s = stbtt_BakeFontBitmap((const unsigned char*)data, 0, 32.f, bitmap, f.bw, f.bh, f.firstChar, nchar, f.cdata);
-
-	f.tex = render_texture_create(bitmap, f.bw, f.bh, GL_RED);
-	glBindTexture(GL_TEXTURE_2D, f.tex.id);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-	free(bitmap);
 	return f;
 }
 
-mesh_t render_font_text(font_t* f, unsigned char* str, float x, float y) {
+mesh_t render_font_text(font_t* f, unsigned char* str, c4_t color) {
 	vertices_t v = {0};
 
 	int vi = 0, ci = 0, ti = 0;
 	int i = 1;
 
+	float xstep = 1.f;
+	float x = 0.f;
+	float y = 0.f;
+	float s = 2.f;
+	float ts = 32.f / 512.f;
+
 	while(*str) {
 		if(*str >= 32 && *str < 128) {
-			stbtt_aligned_quad q;
-			stbtt_GetBakedQuad(f->cdata, f->bw , f->bh, *str - f->firstChar, &x, &y, &q, 1);
-
 			v.v = realloc(v.v, i * 4 * 4 * 2 * sizeof(float));
 			v.c = realloc(v.c, i * 4 * 4 * 4 * sizeof(float));
 			v.t = realloc(v.t, i * 4 * 4 * 2 * sizeof(float));
 
-			printf("(%f , %f) - (%f , %f)\n", q.x0, q.y0, q.s0, q.t1);
+			int tn = *str - 32;
+			float tx = (float)(tn % (int)f->cols) / 16.f;
+			float ty = (float)(tn / (int)f->cols) / 16.f;
 
 			// Vertex 1
-			v.v[vi++] = q.x0;
-			v.v[vi++] = q.y0;
+			v.v[vi++] = x;
+			v.v[vi++] = y;
 
-			v.c[ci++] = 1.f;
-			v.c[ci++] = 1.f;
-			v.c[ci++] = 1.f;
-			v.c[ci++] = 1.f;
+			v.c[ci++] = color.r;
+			v.c[ci++] = color.g;
+			v.c[ci++] = color.b;
+			v.c[ci++] = color.a;
 
-			v.t[ti++] = q.s0;
-			v.t[ti++] = q.t1;
+			v.t[ti++] = tx;
+			v.t[ti++] = ty + ts;
+			//printf("%f; %f\n", tx, ty);
 
 			// Vertex 2
-			v.v[vi++] = q.x1;
-			v.v[vi++] = q.y0;
+			v.v[vi++] = x;
+			v.v[vi++] = y + s;
 
-			v.c[ci++] = 1.f;
-			v.c[ci++] = 1.f;
-			v.c[ci++] = 1.f;
-			v.c[ci++] = 1.f;
+			v.c[ci++] = color.r;
+			v.c[ci++] = color.g;
+			v.c[ci++] = color.b;
+			v.c[ci++] = color.a;
 
-			v.t[ti++] = q.s1;
-			v.t[ti++] = q.t1;
+			v.t[ti++] = tx;
+			v.t[ti++] = ty;
+			//printf("%f; %f\n", tx, ty+th);
 
 			// Vertex 3
-			v.v[vi++] = q.x1;
-			v.v[vi++] = q.y1;
+			v.v[vi++] = x + s;
+			v.v[vi++] = y + s;
 
-			v.c[ci++] = 1.f;
-			v.c[ci++] = 1.f;
-			v.c[ci++] = 1.f;
-			v.c[ci++] = 1.f;
+			v.c[ci++] = color.r;
+			v.c[ci++] = color.g;
+			v.c[ci++] = color.b;
+			v.c[ci++] = color.a;
 
-			v.t[ti++] = q.s1;
-			v.t[ti++] = q.t0;
+			v.t[ti++] = tx + ts;
+			v.t[ti++] = ty;
+			//printf("%f; %f\n", tx + tw, ty + th);
 
 			// Vertex 4
-			v.v[vi++] = q.x0;
-			v.v[vi++] = q.y1;
+			v.v[vi++] = x + s;
+			v.v[vi++] = y;
 
-			v.c[ci++] = 1.f;
-			v.c[ci++] = 1.f;
-			v.c[ci++] = 1.f;
-			v.c[ci++] = 1.f;
+			v.c[ci++] = color.r;
+			v.c[ci++] = color.g;
+			v.c[ci++] = color.b;
+			v.c[ci++] = color.b;
 
-			v.t[ti++] = q.s0;
-			v.t[ti++] = q.t0;
+			v.t[ti++] = tx + ts;
+			v.t[ti++] = ty + ts;
+			//printf("%f; %f\n", tx + tw, ty);
 
 			++i;
 			++str;
+			x += xstep;
 
 			v.count += 4;
 		}
 	}
+
+	/*float vv[] = {
+		0.f, 0.f,
+		0.f, 20.f,
+		20.f, 20.f,
+		20.f, 0.f
+	};
+	float cc[] = {
+		1.f, 1.f, 1.f, 1.f,
+		1.f, 1.f, 1.f, 1.f,
+		1.f, 1.f, 1.f, 1.f,
+		1.f, 1.f, 1.f, 1.f
+	};
+	float j = 0.0625f;
+	float tt[] = {
+		0.f, 0.f,
+		0.f, j,
+		j, j,
+		j, 0.f
+	};
+	v.v = vv;
+	v.c = cc;
+	v.t = tt;
+	v.count = 4;*/
 
 	mesh_t m = render_mesh_create(GL_QUADS, &v);
 	render_vertices_dispose(&v);
@@ -346,7 +375,6 @@ mesh_t render_font_text(font_t* f, unsigned char* str, float x, float y) {
 }
 
 void render_font_dispose(font_t* f) {
-	free(f->cdata);
 }
 
 void render_check_errors(void) {

@@ -27,8 +27,7 @@ void game_init(game_ctx_t* c, int w, int h) {
 	};
 	s->defTexture = render_texture_create(pixels, 2, 2, GL_RGB);
 
-	s->font = render_font_load("res/font.ttf");
-	s->text = render_font_text(&s->font, "niktamer !!", 0.f, UNIT_SIZE * 1.5f);
+	s->font = render_font_load("res/font.png");
 
 	vertices_t bgv;
 	int nstars = 500;
@@ -125,6 +124,11 @@ void game_update(game_ctx_t* c, float dt) {
 	s->camera.x += s->cameraVel.x * 8.f * dt;
 	s->camera.y += s->cameraVel.y * 8.f * dt;
 	render_set_view(&s->shaders, mat4_translate2(s->camera));
+
+	c4_t color = {1.f, 0.f, 0.f, 1.f};
+	unsigned char str[18];
+	sprintf((char*)str, "%d fps, %f s", (int)(1.f / dt), dt);
+	s->text = render_font_text(&s->font, str, color);
 }
 
 void game_render(game_ctx_t* c) {
@@ -137,11 +141,8 @@ void game_render(game_ctx_t* c) {
 	mat4_t m = mat4_translate2(v);
 	render_set_model(&s->shaders, m);
 
-	render_texture_bind(&s->shaders, &s->font.tex);
-	render_mesh_draw(&s->shaders, &s->text);
-
-	render_set_model(&s->shaders, m);
 	render_texture_bind(&s->shaders, &s->defTexture);
+	render_set_model(&s->shaders, m);
 	render_mesh_draw(&s->shaders, &s->bg);
 
 	for(int i = 0; i < (int)s->baseCount; ++i) {
@@ -151,6 +152,12 @@ void game_render(game_ctx_t* c) {
 	for(int i = 0; i < (int)s->shipCount; ++i) {
 		ent_ship_render(&s->shaders, &s->ships[i]);
 	}
+
+
+	m = mat4_translate2((v2_t){0.f, s->height - 2.f});
+	render_set_model(&s->shaders, m);
+	render_texture_bind(&s->shaders, &s->font.tex);
+	render_mesh_draw(&s->shaders, &s->text);
 
 	render_check_errors();
 }

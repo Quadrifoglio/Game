@@ -37,9 +37,9 @@ typedef struct {
 
 typedef struct {
 	size_t bw, bh;
-	int firstChar;
+	size_t rows, cols;
+	size_t size;
 	texture_t tex;
-	stbtt_bakedchar* cdata;
 } font_t;
 
 void render_clear_screen(void);
@@ -62,7 +62,7 @@ mesh_t render_mesh_create(GLenum t, vertices_t* v);
 void render_mesh_draw(shaders_t* s, mesh_t* m);
 
 font_t render_font_load(char* path);
-mesh_t render_font_text(font_t* f, unsigned char* str, float x, float y);
+mesh_t render_font_text(font_t* f, unsigned char* str, c4_t color);
 void render_font_dispose(font_t* f);
 
 void render_check_errors(void);

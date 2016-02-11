@@ -181,16 +181,23 @@ int main(void) {
 
 	g.init(&g.c, g.width, g.height);
 
+	float dt = 0.f;
+
 	while(!glfwWindowShouldClose(w)) {
+		double start = glfwGetTime();
+
 		if(!load_game(&g)) {
 			break;
 		}
 
-		g.update(&g.c, 1.f / 60.f);
+		g.update(&g.c, (float)dt);
 		g.render(&g.c);
 
 		glfwSwapBuffers(w);
 		glfwPollEvents();
+
+		double end = glfwGetTime();
+		dt = (float)(end - start);
 	}
 
 	free(g.c.storage);
