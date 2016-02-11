@@ -2,7 +2,6 @@
 
 #include "global.h"
 #include "game/math.h"
-#include "lib/stb_truetype.h"
 #include <GL/glew.h>
 
 typedef struct {
@@ -42,6 +41,7 @@ typedef struct {
 	texture_t tex;
 } font_t;
 
+void render_init(int w, int h);
 void render_clear_screen(void);
 
 vertices_t render_vertices_load(char* path, c4_t defColor);
@@ -49,8 +49,6 @@ void render_vertices_dispose(vertices_t* v);
 
 shaders_t render_shaders_load(char* vertexPath, char* fragmentPath);
 void render_shaders_bind(shaders_t* s);
-
-void render_set_viewport(int w, int h);
 void render_set_projection(shaders_t* s, mat4_t m);
 void render_set_view(shaders_t* s, mat4_t v);
 void render_set_model(shaders_t* s, mat4_t m);

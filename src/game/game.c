@@ -10,7 +10,7 @@ void game_init(game_ctx_t* c, int w, int h) {
 	game_state_t* s = (game_state_t*)c->storage;
 	s->width = (float)w / UNIT_SIZE;
 	s->height = (float)h / UNIT_SIZE;
-	render_set_viewport(w, h);
+	render_init(w, h);
 
 	s->shaders = render_shaders_load("shaders/basic.vertex", "shaders/basic.fragment");
 	render_shaders_bind(&s->shaders);

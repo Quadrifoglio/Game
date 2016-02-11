@@ -9,6 +9,13 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "lib/stb_image.h"
 
+void render_init(int w, int h) {
+	glViewport(0, 0, w, h);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+}
+
 void render_clear_screen(void) {
 	glClearColor(0.f, 0.f, 0.f, 1.f);
 	glClear(GL_COLOR_BUFFER_BIT);
@@ -154,13 +161,6 @@ void render_vertices_dispose(vertices_t* v) {
 	if(v->t) {
 		free(v->t);
 	}
-}
-
-void render_set_viewport(int w, int h) {
-	glViewport(0, 0, w, h);
-
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 }
 
 void render_set_projection(shaders_t* s, mat4_t m) {
