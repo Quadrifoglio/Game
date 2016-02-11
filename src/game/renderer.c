@@ -295,7 +295,6 @@ mesh_t render_font_text(font_t* f, unsigned char* str, c4_t color) {
 
 			v.t[ti++] = tx;
 			v.t[ti++] = ty + ts;
-			//printf("%f; %f\n", tx, ty);
 
 			// Vertex 2
 			v.v[vi++] = x;
@@ -308,7 +307,6 @@ mesh_t render_font_text(font_t* f, unsigned char* str, c4_t color) {
 
 			v.t[ti++] = tx;
 			v.t[ti++] = ty;
-			//printf("%f; %f\n", tx, ty+th);
 
 			// Vertex 3
 			v.v[vi++] = x + s;
@@ -321,7 +319,6 @@ mesh_t render_font_text(font_t* f, unsigned char* str, c4_t color) {
 
 			v.t[ti++] = tx + ts;
 			v.t[ti++] = ty;
-			//printf("%f; %f\n", tx + tw, ty + th);
 
 			// Vertex 4
 			v.v[vi++] = x + s;
@@ -334,7 +331,6 @@ mesh_t render_font_text(font_t* f, unsigned char* str, c4_t color) {
 
 			v.t[ti++] = tx + ts;
 			v.t[ti++] = ty + ts;
-			//printf("%f; %f\n", tx + tw, ty);
 
 			++i;
 			++str;
@@ -343,30 +339,6 @@ mesh_t render_font_text(font_t* f, unsigned char* str, c4_t color) {
 			v.count += 4;
 		}
 	}
-
-	/*float vv[] = {
-		0.f, 0.f,
-		0.f, 20.f,
-		20.f, 20.f,
-		20.f, 0.f
-	};
-	float cc[] = {
-		1.f, 1.f, 1.f, 1.f,
-		1.f, 1.f, 1.f, 1.f,
-		1.f, 1.f, 1.f, 1.f,
-		1.f, 1.f, 1.f, 1.f
-	};
-	float j = 0.0625f;
-	float tt[] = {
-		0.f, 0.f,
-		0.f, j,
-		j, j,
-		j, 0.f
-	};
-	v.v = vv;
-	v.c = cc;
-	v.t = tt;
-	v.count = 4;*/
 
 	mesh_t m = render_mesh_create(GL_QUADS, &v);
 	render_vertices_dispose(&v);

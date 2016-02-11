@@ -141,6 +141,11 @@ void game_render(game_ctx_t* c) {
 	mat4_t m = mat4_translate2(v);
 	render_set_model(&s->shaders, m);
 
+	mat4_t uitr = mat4_translate2((v2_t){0.f, s->height - 2.f});
+	render_set_model(&s->shaders, mat4_multiply(&m, &uitr));
+	render_texture_bind(&s->shaders, &s->font.tex);
+	render_mesh_draw(&s->shaders, &s->text);
+
 	render_texture_bind(&s->shaders, &s->defTexture);
 	render_set_model(&s->shaders, m);
 	render_mesh_draw(&s->shaders, &s->bg);
@@ -153,11 +158,6 @@ void game_render(game_ctx_t* c) {
 		ent_ship_render(&s->shaders, &s->ships[i]);
 	}
 
-
-	m = mat4_translate2((v2_t){0.f, s->height - 2.f});
-	render_set_model(&s->shaders, m);
-	render_texture_bind(&s->shaders, &s->font.tex);
-	render_mesh_draw(&s->shaders, &s->text);
 
 	render_check_errors();
 }
