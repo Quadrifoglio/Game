@@ -61,24 +61,15 @@ void game_init(game_ctx_t* c, int w, int h) {
 	s->bases[0] = ent_base_create(color, (v2_t){40.f, 22.5f});
 	s->baseCount = 1;
 
-	color = (c4_t){1.f, 1.f, 1.f, 1.f};
-	s->ships[0]= ent_ship_create(color);
-	s->ships[0].position = (v2_t){SHIP_WIDTH / 2.f, SHIP_HEIGHT / 2.f};
-
+	v2_t pos = (v2_t){0.f, 0.f};
 	color = (c4_t){1.f, 0.f, 0.f, 1.f};
-	s->ships[1] = ent_ship_create(color);
-	s->ships[1].position = (v2_t){SHIP_WIDTH / 2.f, s->height - (SHIP_HEIGHT / 2.f)};
-	s->ships[1].rotation = PI;
+	s->groups[0]= ent_ship_group_create(color, 50, pos, 0);
 
-	color = (c4_t){0.f, 1.f, 0.f, 1.f};
-	s->ships[2] = ent_ship_create(color);
-	s->ships[2].position = (v2_t){s->width - (SHIP_WIDTH / 2.f), s->height - (SHIP_HEIGHT / 2.f)};
-	s->ships[2].rotation = PI;
-
+	pos = (v2_t){(s->width / 2.f) - 5 * SHIP_WIDTH, s->height / 2.f};
 	color = (c4_t){0.f, 0.f, 1.f, 1.f};
-	s->ships[3] = ent_ship_create(color);
-	s->ships[3].position = (v2_t){s->width - (SHIP_WIDTH / 2.f), SHIP_HEIGHT / 2.f};
-	s->shipCount = 4;
+	s->groups[1]= ent_ship_group_create(color, 10, pos, PI);
+
+	s->groupCount = 2;
 }
 
 void game_event(game_ctx_t* c, game_event_t ev) {
@@ -104,9 +95,7 @@ void game_event(game_ctx_t* c, game_event_t ev) {
 		float x = (ev.clickX / UNIT_SIZE) - s->camera.x;
 		float y = (s->height - ev.clickY / UNIT_SIZE) - s->camera.y;
 
-		for(int i = 0; i < (int)s->shipCount; ++i) {
-			s->ships[i].target = (v2_t){x, y};
-		}
+		s->groups[0].target = (v2_t){x, y};
 	}
 }
 
@@ -117,8 +106,8 @@ void game_update(game_ctx_t* c, float dt) {
 		ent_base_update(&s->bases[i], dt);
 	}
 
-	for(int i = 0; i < (int)s->shipCount; ++i) {
-		ent_ship_update(&s->ships[i], dt);
+	for(int i = 0; i < (int)s->groupCount; ++i) {
+		ent_ship_group_update(&s->groups[i], dt);
 	}
 
 	s->camera.x += s->cameraVel.x * 8.f * dt;
@@ -154,8 +143,8 @@ void game_render(game_ctx_t* c) {
 		ent_base_render(&s->shaders, &s->bases[i]);
 	}
 
-	for(int i = 0; i < (int)s->shipCount; ++i) {
-		ent_ship_render(&s->shaders, &s->ships[i]);
+	for(int i = 0; i < (int)s->groupCount; ++i) {
+		ent_ship_group_render(&s->shaders, &s->groups[i]);
 	}
 
 

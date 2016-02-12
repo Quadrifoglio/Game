@@ -18,8 +18,8 @@ typedef struct {
 
 	mesh_t bg;
 
-	ship_t ships[4];
-	size_t shipCount;
+	ship_group_t groups[4];
+	size_t groupCount;
 
 	base_t bases[1];
 	size_t baseCount;

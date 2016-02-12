@@ -2,22 +2,27 @@
 
 #include "game/renderer.h"
 
-#define SHIP_WIDTH 1.f
+#define SHIP_WIDTH  1.f
 #define SHIP_HEIGHT 2.f
 
-#define BASE_WIDTH 2.5f
+#define BASE_WIDTH  2.5f
 #define BASE_HEIGHT 2.5f
 
-typedef struct {
-	mesh_t mesh;
+#define SHIP_MAX        50
+#define SHIP_BASE_SPEED 4.f
 
-	v2_t position;
-	v2_t velocity;
-	float rotation;
+typedef struct {
+	int addIndex;
+	int count;
+
+	mesh_t meshes[SHIP_MAX];
+	v2_t positions[SHIP_MAX];
+	v2_t velocities[SHIP_MAX];
+	float rotations[SHIP_MAX];
 
 	v2_t target;
 	float speed;
-} ship_t;
+} ship_group_t;
 
 typedef struct {
 	v2_t position;
@@ -25,9 +30,10 @@ typedef struct {
 	float rotation;
 } base_t;
 
-ship_t ent_ship_create(c4_t color);
-void ent_ship_update(ship_t* s, float dt);
-void ent_ship_render(shaders_t* sh, ship_t* s);
+ship_group_t ent_ship_group_create(c4_t color, int count, v2_t pos, float rotation);
+void ent_ship_group_add(ship_group_t* s, c4_t color, v2_t pos, float rotation);
+void ent_ship_group_update(ship_group_t* s, float dt);
+void ent_ship_group_render(shaders_t* sh, ship_group_t* s);
 
 base_t ent_base_create(c4_t color, v2_t position);
 void ent_base_update(base_t* s, float dt);
